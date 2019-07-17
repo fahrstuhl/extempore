@@ -2878,26 +2878,26 @@
   (lambda (module-name module)
     (let* ((llc-path (sanitize-platform-path (string-append (get-llvm-path) "/bin/llc"))))
       (let* ((platform (sys:platform))
-             (print "creating tmp-dir\n")
+             (begin (print "creating tmp-dir\n"))
              (tmp-dir (unix-or-Windows "/tmp/extempore/" (string-append (sys:command-output "echo %TEMP%") "\\extempore\\")))
-             (print "creating bc-path\n")
+             (begin (print "creating bc-path\n"))
              (bc-path (string-append tmp-dir module-name (unix-or-Windows ".bc" ".ll")))
-             (print "creating asm-path\n")
+             (begin (print "creating asm-path\n"))
              (asm-path (string-append tmp-dir module-name (unix-or-Windows ".o" ".obj"))) ; could skip .o (straight to .so)
-             (print "creating output-dir\n")
+             (begin (print "creating output-dir\n"))
              (output-dir (sanitize-platform-path (string-append (sys:share-dir) "/libs/aot-cache/")))
-             (print "creating output-shlib-path\n")
+             (begin (print "creating output-shlib-path\n"))
              (output-shlib-path (string-append output-dir module-name
                                                (cond ((string=? platform "Linux") ".so")
                                                      ((string=? platform "OSX") ".dylib")
                                                      ((string=? platform "Windows") ".dll"))))
-             (print "set link-libs\n")
+             (begin (print "set link-libs\n"))
              (link-libs (if (string=? platform "Windows")
                             *impc:aot:win-link-libraries*
                             '()))
-             (print "check optimize-compiles\n")
+             (begin (print "check optimize-compiles\n"))
              (optimize-compiles? #t)
-             (print "create llc-command\n")
+             (begin (print "create llc-command\n"))
              (llc-command
               (unix-or-Windows (string-append
                                 llc-path
@@ -2917,7 +2917,7 @@
                                 (if optimize-compiles? " -O3 -tailcallopt" "-O0")
                                 " -filetype=obj -mtriple=x86_64-pc-win32 "
                                 bc-path)))
-             (print "create link-command\n")
+             (begin (print "create link-command\n"))
              (link-command
               (unix-or-Windows (string-append
                                 (cond ((string=? platform "Linux")
