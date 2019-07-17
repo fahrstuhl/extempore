@@ -55,7 +55,10 @@
     (if *impc:compiler:print-raw-llvm*
         (print-full-nq *impc:compiler:queued-llvm-ir-string*))
     (if (not (string=? *impc:compiler:queued-llvm-ir-string* ""))
-        (let ((res (llvm:jit-compile-ir-string *impc:compiler:queued-llvm-ir-string*)))
+        (let (
+          (begin (print "Jit-compile-ir-string"))
+          (res (llvm:jit-compile-ir-string *impc:compiler:queued-llvm-ir-string*))
+        )
           (print "Reset-jit-compilation-queue\n")
           (impc:compiler:reset-jit-compilation-queue)
           (print "Flushed IR compilation queue with result: " res "\n")
