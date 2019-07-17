@@ -685,7 +685,8 @@ void initLLVM()
     Opts.UnsafeFPMath = false;
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
-    LLVMInitializeX86Disassembler();
+    /* LLVMInitializeX86Disassembler(); */
+    LLVMInitializeAllDisassemblers();
     auto& context(llvm::getGlobalContext());
     auto module(llvm::make_unique<llvm::Module>("xtmmodule_0", context));
     M = module.get();
