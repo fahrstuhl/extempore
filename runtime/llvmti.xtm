@@ -2878,26 +2878,26 @@
   (lambda (module-name module)
     (let* ((llc-path (sanitize-platform-path (string-append (get-llvm-path) "/bin/llc"))))
       (let* ((platform (sys:platform))
-             (begin (print "creating tmp-dir\n"))
+             (begin (print "creating tmp-dir\n")(void))
              (tmp-dir (unix-or-Windows "/tmp/extempore/" (string-append (sys:command-output "echo %TEMP%") "\\extempore\\")))
-             (begin (print "creating bc-path\n"))
+             (begin (print "creating bc-path\n")(void))
              (bc-path (string-append tmp-dir module-name (unix-or-Windows ".bc" ".ll")))
-             (begin (print "creating asm-path\n"))
+             (begin (print "creating asm-path\n")(void))
              (asm-path (string-append tmp-dir module-name (unix-or-Windows ".o" ".obj"))) ; could skip .o (straight to .so)
-             (begin (print "creating output-dir\n"))
+             (begin (print "creating output-dir\n")(void))
              (output-dir (sanitize-platform-path (string-append (sys:share-dir) "/libs/aot-cache/")))
              (begin (print "creating output-shlib-path\n"))
              (output-shlib-path (string-append output-dir module-name
                                                (cond ((string=? platform "Linux") ".so")
                                                      ((string=? platform "OSX") ".dylib")
                                                      ((string=? platform "Windows") ".dll"))))
-             (begin (print "set link-libs\n"))
+             (begin (print "set link-libs\n")(void))
              (link-libs (if (string=? platform "Windows")
                             *impc:aot:win-link-libraries*
                             '()))
-             (begin (print "check optimize-compiles\n"))
+             (begin (print "check optimize-compiles\n")(void))
              (optimize-compiles? #t)
-             (begin (print "create llc-command\n"))
+             (begin (print "create llc-command\n")(void))
              (llc-command
               (unix-or-Windows (string-append
                                 llc-path
@@ -2917,7 +2917,7 @@
                                 (if optimize-compiles? " -O3 -tailcallopt" "-O0")
                                 " -filetype=obj -mtriple=x86_64-pc-win32 "
                                 bc-path)))
-             (begin (print "create link-command\n"))
+             (begin (print "create link-command\n")(void))
              (link-command
               (unix-or-Windows (string-append
                                 (cond ((string=? platform "Linux")
@@ -3108,9 +3108,13 @@
                           (println)
                           (print-with-colors 'black 'yellow #t (print " JIT-compiling IR "))
                           (print "\n"))
-                        (let ((module (impc:compiler:flush-jit-compilation-queue)))
+                        (let (
+                            (begin (print "flushing queue\n"))
+                            (module (impc:compiler:flush-jit-compilation-queue))
+                            )
                           (if (not module)
                               (impc:compiler:print-compiler-error "Failed compiling LLVM IR"))
+                          (begin (print "compiling module\n"))
                           (impc:aot:compile-module libname-no-extension module))
                         ;; (impc:aot:insert-footer libname-no-extension)
                         (close-port *impc:aot:current-output-port*)
