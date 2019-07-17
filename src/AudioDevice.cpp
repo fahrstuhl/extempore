@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string.h>
 #include <inttypes.h>
-#include <xmmintrin.h>
+/* #include <xmmintrin.h> */
 #include <regex>
 
 #include "AudioDevice.h"
@@ -136,7 +136,9 @@ static inline SAMPLE audio_sanity(SAMPLE x)
 static inline float audio_sanity_f(float x)
 {
     if (likely(isfinite(x))) {
-        _mm_store_ss(&x, _mm_min_ss(_mm_max_ss(_mm_set_ss(x), _mm_set_ss(-0.99f)), _mm_set_ss(0.99f)));
+        if (unlikely(x < -0.99f)) return -0.99f;
+        if (unlikely(x > 0.99f)) return 0.99f;
+        /* _mm_store_ss(&x, _mm_min_ss(_mm_max_ss(_mm_set_ss(x), _mm_set_ss(-0.99f)), _mm_set_ss(0.99f))); */
         return x;
     }
     return 0.0;
